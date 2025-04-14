@@ -15,7 +15,6 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 # Initialize Gemini
 genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel("gemini-1.5-pro-latest")
-
 recognizer = sr.Recognizer()
 
 async def handle_call(websocket, path):
@@ -24,7 +23,6 @@ async def handle_call(websocket, path):
         async for message in websocket:
             print("📥 Received audio")
 
-            # Convert binary to AudioData
             try:
                 audio_data = sr.AudioData(message, sample_rate=8000, sample_width=2)
                 user_text = recognizer.recognize_google(audio_data)
@@ -33,7 +31,6 @@ async def handle_call(websocket, path):
                 user_text = "Sorry, I couldn't understand you."
                 print("Recognition error:", e)
 
-            # Get Gemini Response
             try:
                 response = model.generate_content(user_text)
                 reply = response.text.strip()
@@ -41,7 +38,6 @@ async def handle_call(websocket, path):
                 reply = f"Sorry, there was an error: {str(e)}"
             print(f"🤖 Bot: {reply}")
 
-            # Convert reply to audio
             try:
                 tts = gTTS(reply)
                 tts_fp = io.BytesIO()
@@ -60,9 +56,10 @@ async def handle_call(websocket, path):
     except websockets.exceptions.ConnectionClosed:
         print("🔌 Client disconnected")
 
-# Start WebSocket server
-start_server = websockets.serve(handle_call, "0.0.0.0", 10000)
+async def main():
+    print("🚀 Starting Voicebot server on ws://0.0.0.0:10000")
+    async with websockets.serve(handle_call, "0.0.0.0", 10000):
+        await asyncio.Future()  # Run forever
 
-print("🚀 Voicebot Gemini server running on ws://0.0.0.0:10000")
-asyncio.get_event_loop().run_until_complete(start_server)
-asyncio.get_event_loop().run_forever()
+if __name__ == "__main__":
+    asyncio.run(main())
