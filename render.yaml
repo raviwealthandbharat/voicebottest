@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: voicebot-wss
+    env: python
+    plan: free
+    branch: main
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "python app.py"
+    envVars:
+      - key: GEMINI_API_KEY
+        value: your-gemini-api-key

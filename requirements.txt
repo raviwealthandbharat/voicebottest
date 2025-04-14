@@ -1,0 +1,7 @@
+websockets
+google-generativeai
+speechrecognition
+gTTS
+pydub
+python-dotenv
+ffmpeg
