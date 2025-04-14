@@ -1,7 +1,7 @@
 websockets
-google-generativeai
-speechrecognition
 gTTS
 pydub
+google-generativeai
+speechrecognition
 python-dotenv
 ffmpeg
